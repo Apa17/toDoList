@@ -10,6 +10,9 @@ export class Item{
     name: string;
 
     @Column()
+    marked: boolean;
+
+    @Column()
     iconid: number;
     
     @Column()
