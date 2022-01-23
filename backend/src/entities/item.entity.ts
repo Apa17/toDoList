@@ -10,7 +10,7 @@ export class Item{
     name: string;
 
     @Column()
-    marked: boolean;
+    checked: boolean;
 
     @Column()
     iconid: number;
