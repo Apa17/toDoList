@@ -11,6 +11,18 @@ export class ItemService extends BaseService<Item> {
         super();
     }
 
+    async modify(id: any){
+        let variable = await this.getRepository().findOne(id);
+        variable.checked=!variable.checked;
+        this.getRepository().save(variable);
+    }
+
+    async modifyname(entity: Item){
+        let variable = await this.getRepository().findOne(entity.id);
+        variable.name = entity.name;
+        this.getRepository().save(variable);
+    }
+
     getRepository(): Repository<Item> {
         return this.personaRepo;
     }

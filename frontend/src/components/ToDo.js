@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import {RiCloseCircleLine} from 'react-icons/ri';
-import {TiEdit} from 'react-icons/ti';
 
 class ToDo extends Component {
   constructor(props){
@@ -50,20 +48,66 @@ class ToDo extends Component {
             method: 'POST',
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: texto})
-          })
-    }
-    
-    this.getItemsGET();
+          })//.then(response => response.json()).then(dataa => idnueva = dataa[0].id)
+          //await fetch('http://localhost:3000/api/item/find('+idnueva+')').then(response => response.json())
+          //.then(dataaa => { this.setState.items[this.setState.items.length]=dataaa[0]});
+          //lo anterior por alguna razon no funciona, intentare una vez termine.
+      }
+      
+      this.getItemsGET(); //deberia cambiar esto por una solucion ajax. si me queda tiempo
 
     this.setInput('');
   };
 
-  handleSubmitEdit = async e => {
+  handleSubmitEdit = async e =>{
     e.preventDefault();
-  }
+    let texto = document.getElementById('editinput'+e.target.name).value;
+     if (!(!texto || /^\s*$/.test(texto))) {
+       await fetch('http://localhost:3000/api/item/modifyname', {
+           method: 'POST',
+           headers: { "Content-Type": "application/json" },
+           body: JSON.stringify({ id: e.target.name, name: texto})
+         })//.then(response => response.json()).then(dataa => idnueva = dataa[0].id)
+         //await fetch('http://localhost:3000/api/item/find('+idnueva+')').then(response => response.json())
+         //.then(dataaa => { this.setState.items[this.setState.items.length]=dataaa[0]});
+         //lo anterior por alguna razon no funciona, intentare una vez termine.
+     }
+    
+     this.getItemsGET(); //deberia cambiar esto por una solucion ajax. si me queda tiempo, no me queda jaja
+      e.target.style.display = 'none';
+      document.getElementById('editb'+e.target.name).value="0";
+  };
 
   handleChange = e => { 
     this.setInput(e.target.value);
+  };
+
+  handleClickEdit = e => { 
+    if(e.target.value !== "0"){
+        document.getElementById('edit'+e.target.name).style.display = 'none';
+        e.target.value = "0";
+    }else{
+        document.getElementById('edit'+e.target.name).style.display = 'block';
+        e.target.value = "1";
+    }
+  };
+
+  handleChangeCheckbox = async e =>{
+    await fetch('http://localhost:3000/api/item/modify/'+e.target.id, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify()//, checked: e.target.value})
+    });
+  };
+
+  handleSubmitDelete = async e =>{
+    console.log(e);
+    await fetch('http://localhost:3000/api/item/delete/'+e.target.id, {
+    method: 'POST',
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify()//, checked: e.target.value})
+    });
+    this.getItemsGET(); //esto se podria hacer mas facil pero estoy corto de tiempo, saludos!
   };
 
   render() {
@@ -71,27 +115,32 @@ class ToDo extends Component {
       this.state.input='';
     }
     const { items} = this.state;
+    //    
     return (<div>
-        List of posts
         {
               items.length ?
               items.map(item => <div key={item.id}>
                 {item.checked ? 
-                <input id={item.id} defaultChecked type="checkbox"  />  : 
-                <input id={item.id} type="checkbox"  />  
+                <input id={item.id} value="1" defaultChecked type="checkbox"  onChange={this.handleChangeCheckbox}/>  : 
+                <input id={item.id} value="0" type="checkbox"  onChange={this.handleChangeCheckbox}/>  
                 }
-                {item.name}
-                <form className= "edit-item-form" onSubmit={this.handleSubmitEdit}>
+                <span id={`p${item.id}`}>{item.name}</span>       
+                <button id={`editb${item.id}`} name={item.id} value="0" onClick={this.handleClickEdit}>Edit</button>
+                <button id={item.id} onClick={this.handleSubmitDelete}>Delete</button>
 
+                <form className="add-item-form" id={`edit${item.id}`} name={item.id} style={{display: 'none'}} onSubmit={this.handleSubmitEdit}>
+                    <input  id={`editinput${item.id}`} 
+                    type="text" 
+                    placeholder={this.name} 
+                    ></input>
+                    <button className='todo-button-item'> Edit ToDo item</button>
+                    <br></br>
                 </form>
-                <a href=""> Edit</a>
-                <a href=""> Delete</a>
-                </div>) : null 
+                </div>
+
+                ) : null 
         }
-              <div className='icons'> 
-              <RiCloseCircleLine /> 
-              <TiEdit />
-              </div>  
+              
           <form className="add-item-form" onSubmit={this.handleSubmitAdd}>
             <input id="input-item"
                 type='text' 
@@ -100,9 +149,10 @@ class ToDo extends Component {
                 className='todo-input'
                 onChange={this.handleChange}
             />
-            <button className='todo-button-item'> Add todo item</button>
+            <button className='todo-button-item'> Add ToDo item</button>
             
         </form>
+        <br/>
     </div>);
   }
 }
