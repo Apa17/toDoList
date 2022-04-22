@@ -2,7 +2,7 @@
 
 ## About the project:
 
-Es una todolist web app hecha con react y nestjs +type orm con una base de datos mysql. Realizada en 3 dias sin experiencia previa con las tecnologias mencionadas (excepto con mysql).
+Es una todolist web app hecha con react y nestjs +type orm con una base de datos mysql. Es mi primer proyecto en react.
 
 ## Instalacion:
 
